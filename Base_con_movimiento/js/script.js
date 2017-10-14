@@ -1,6 +1,4 @@
-/**
- *
- * WebGL With Three.js - Lesson 10 - Drag and Drop Objects
+* WebGL With Three.js - Lesson 10 - Drag and Drop Objects
  * http://www.script-tutorials.com/webgl-with-three-js-lesson-10/
  *
  * Licensed under the MIT license.
@@ -9,6 +7,8 @@
  * Copyright 2015, Script Tutorials
  * http://www.script-tutorials.com/
  */
+var global=0;
+var object;
 
 sbVertexShader = [
   "varying vec3 vWorldPosition;",
@@ -102,17 +102,10 @@ sbVertexShader = [
       this.scene.add(this.plane);
   
       // Add 100 random objects (spheres)
-      var object, material, radius;
+      var material, radius;
       var objGeometry = new THREE.SphereGeometry(1, 24, 24);
-      for (var i = 0; i < 400; i++) {
-        //aqui esta el color
-          material = new THREE.MeshPhongMaterial({
-          
-            color: 0xe1ff, emissive: 0x980149, specular: 0xed0404, shininess: 100
-           
-          })
-          //refleja el fondo en la burbuja
-          ///material.envMap= reflection;
+      for (var i = 0; i < 40; i++) {
+        material = new THREE.MeshPhongMaterial({color: Math.random() * 0xffff00});
         material.transparent = true;
         material.opacity= .5;
         object = new THREE.Mesh(objGeometry.clone(), material);
@@ -123,16 +116,15 @@ sbVertexShader = [
         object.scale.y = radius;
         object.scale.z = radius;
   
-        object.position.x = Math.random() * 200 - 100;
-        object.position.y = Math.random() * 200 - 100;
-        object.position.z = Math.random() * 200 - 100;
+        object.position.x = 0;
+        object.position.y = 0;
+        object.position.z = 0;
 
-        
-       
-  
         this.scene.add(object);
+        
+        console.log(object);
       }
-  
+      
     },
     addSkybox: function() {
       var iSBrsize = 500;
@@ -209,6 +201,7 @@ sbVertexShader = [
       lesson10.controls.enabled = true;
       lesson10.selection = null;
     }
+    
   };
   
   // Animate the scene
@@ -216,6 +209,18 @@ sbVertexShader = [
     requestAnimationFrame(animate);
     render();
     update();
+    console.log(global);
+    var j=0;
+    while(j <= 100){
+      console.log("Espera");
+      j++;
+    }
+    object.position.set(global,global,0);
+    if (global < 100){
+      global++;
+    } else {
+      global = 0;
+    }
   }
   
   // Update controls and stats
@@ -244,4 +249,3 @@ sbVertexShader = [
   else if (window.attachEvent)
     window.attachEvent('onload', initializeLesson);
   else window.onload = initializeLesson;
-  
