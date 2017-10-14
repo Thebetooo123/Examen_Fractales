@@ -108,7 +108,7 @@ sbVertexShader = [
         //aqui esta el color
           material = new THREE.MeshPhongMaterial({
           
-            color: 0xe1ff, emissive: 0x980149, specular: 0xed0404, shininess: 1
+            color: 0xe1ff, emissive: 0x980149, specular: 0xed0404, shininess: 100
            
           })
           //refleja el fondo en la burbuja
