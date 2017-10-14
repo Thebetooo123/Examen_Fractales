@@ -105,7 +105,14 @@ sbVertexShader = [
       var object, material, radius;
       var objGeometry = new THREE.SphereGeometry(1, 24, 24);
       for (var i = 0; i < 400; i++) {
-        material = new THREE.MeshPhongMaterial({color: Math.random() * 0xffff00});
+        //aqui esta el color
+          material = new THREE.MeshPhongMaterial({
+          
+            color: 0xe1ff, emissive: 0x980149, specular: 0xed0404, shininess: 1
+           
+          })
+          //refleja el fondo en la burbuja
+          ///material.envMap= reflection;
         material.transparent = true;
         material.opacity= .5;
         object = new THREE.Mesh(objGeometry.clone(), material);
