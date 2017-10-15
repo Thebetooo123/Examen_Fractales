@@ -2,7 +2,7 @@
 
 <head>
     <meta charset=utf-8>
-    <title>My first three.js app</title>
+    <title>Burbujas</title>
     <style>
         body {
             background-color: #ffffff;
@@ -41,6 +41,8 @@
         ///var scene2, renderer2;
         var controls;
         var objects = [];
+        var container;
+        var mouse, raycaster, isShiftDown = false;
 
         init();
         animate();
@@ -87,9 +89,8 @@
 
                 group.add(sphere);
                 objects.push(sphere);
-                console.log(group.add(sphere));
+
             }
-            //console.log(group);
             scene.add(group);
             renderer = new THREE.WebGLRenderer();
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -100,12 +101,44 @@
 
             container.appendChild(renderer.domElement);
 
-            var raycaster = new THREE.Raycaster();
+            raycaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
             //Arrarstrar la esfera
             var dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
             dragControls.addEventListener('dragstart', function (event) { controls.enabled = false; });
             dragControls.addEventListener('dragend', function (event) { controls.enabled = true; });
+
+            document.addEventListener('mousedown', onDocumentMouseDown, false);
+            document.addEventListener('keydown', onDocumentKeyDown, false);
+            document.addEventListener('keyup', onDocumentKeyUp, false);
+        }
+
+        function onDocumentMouseDown(event) {
+            event.preventDefault();
+            mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+            mouse.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+            console.log("x " + mouse.x + "y " + mouse.y);
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObjects(objects);
+            if (intersects.length > 0) {
+                var intersect = intersects[0];
+                if (isShiftDown) {
+                    if (intersect.object != group) {
+                        group.remove(intersect.object);
+                        playSound();
+                    }
+                }
+            }
+        }
+        function onDocumentKeyDown(event) {
+            switch (event.keyCode) {
+                case 16: isShiftDown = true; break;
+            }
+        }
+        function onDocumentKeyUp(event) {
+            switch (event.keyCode) {
+                case 16: isShiftDown = false; break;
+            }
         }
         function animate() {
             requestAnimationFrame(animate);
@@ -128,7 +161,7 @@
             sound.play()
         }
         function clickmose(event) {
-            playSound();
+            //  playSound();
         }
         window.addEventListener('click', clickmose, false);
     </script>
