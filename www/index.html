@@ -73,7 +73,8 @@
                     {
                         color: Math.random() * 0xffff00,
                         opacity: .3,
-                        transparent: true
+                        transparent: true,
+                        wireframe: false //Renderizado de poligonos.
                     });
                 var sphere = new THREE.Mesh(geometry, material);
 
@@ -146,6 +147,11 @@
             render();
             renderer.render(scene, camera);
         };
+        //Rotacion de cada una de las esferas sobre su propio eje, (Con el eje Y)
+              for (var i = 0; i < objects.length; i++) {
+                if(objects[i] !== undefined)
+                    objects[i].rotation.y += Math.PI / 100;
+        }
         function render() {
             var timer = 0.0001 * Date.now();
             for (var i = 0, l = group.children.length; i < l; i++) {
