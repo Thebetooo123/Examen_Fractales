@@ -1,6 +1,8 @@
 <html>
 
 <head>
+        <audio id="audio" src="sound/burbuja3.wav" autostart="true"></audio>
+        <audio id="cumbion" src="sound/cumbion.mp3" autoplay="true"></audio>
     <meta charset=utf-8>
     <title>Burbujas</title>
     <style>
@@ -27,8 +29,7 @@
         }
     </style>
 </head>
-<audio id="audio" src="sound/burbuja3.wav" autostart="false"></audio>
-<audio id="cumbion" src="sound/cumbion.mp3" autostart="false"></audio>
+
 
 <body>
     <script src="js/three.js"></script>
@@ -38,154 +39,218 @@
     <script src="js/controls/DragControls.js"></script>
 
     <script>
-        var camera, scene, renderer;
-        ///var scene2, renderer2;
-        var controls;
-        var objects = [];
-        var container;
         var mouse, raycaster, isShiftDown = false;
+            var container;
 
-        init();
-        
-        animate();
-        playCumbion();
-        function init() {
-            container = document.createElement('div');
-            document.body.appendChild(container);
-            //Camara
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-            camera.position.set(3200, 3200, 3200);
-            //Controles mouse
-            controls = new THREE.TrackballControls(camera);
-            //Esena
-            var path = "textures/cube/";
-            var format = '.jpg';
-            var urls = [
-                        path + 'px' + format, path + 'nx' + format,
-                        path + 'py' + format, path + 'ny' + format,
-                        path + 'pz' + format, path + 'nz' + format
-                    ];
-            var textureCube = new THREE.CubeTextureLoader().load( urls );
-			textureCube.format = THREE.RGBFormat;
-            scene = new THREE.Scene();
-            scene.background = textureCube;
-            //scene2 = new THREE.Scene();
+            var controls;
 
-            //Grid
-            //var gridHelper = new THREE.GridHelper(100, 10);
-            //scene.add(gridHelper);
+            var camera, scene, renderer;
+            var cameraCube, sceneCube;
 
-            group = new THREE.Group(); //Grupo
+            var mesh, lightMesh, geometry;
+            var spheres = [];
 
-            //Forma del objeto
-            var geometry = new THREE.SphereGeometry(300, 32, 32);
+            var directionalLight, pointLight;
 
-            //Propiedades de la esfera
+            var mouseX = 0, mouseY = 0;
+
+            var windowHalfX = window.innerWidth / 2;
+            var windowHalfY = window.innerHeight / 2;
+
+
+            init();
+            animate();
+
+            function init() {
+
+                container = document.createElement( 'div' );
+                document.body.appendChild( container );
+
+                camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
+                camera.position.z = 3200;
+
+                controls = new THREE.TrackballControls(camera);
+
+                cameraCube = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
+
+                scene = new THREE.Scene();
+                sceneCube = new THREE.Scene();
+
+                var geometry = new THREE.SphereGeometry( 100, 32, 16 );
+
+                var path = "textures/cube/";
+                var format = '.jpg';
+                var urls = [
+                    path + 'px' + format, path + 'nx' + format,
+                    path + 'py' + format, path + 'ny' + format,
+                    path + 'pz' + format, path + 'nz' + format
+                ];
+
+            var textureCube = THREE.ImageUtils.loadTextureCube( urls, THREE.CubeRefractionMapping );
+                //Propiedades de la esfera
             var shader = THREE.FresnelShader;
             var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-            uniforms[ "tCube" ].value = textureCube;
+            shader.uniforms[ "tCube" ].value = textureCube;
 
-            var material = new THREE.ShaderMaterial( {
+             var material = new THREE.ShaderMaterial( {
                 uniforms: uniforms,
                 vertexShader: shader.vertexShader,
-                fragmentShader: shader.fragmentShader
+                fragmentShader: shader.fragmentShader,
+                wireframe: !true
             } );
+                
+                for ( var i = 0; i < 500; i ++ ) {
 
+                    var mesh = new THREE.Mesh( geometry, material );
 
-            for (var i = 0; i < 200; i++) {
-                var sphere = new THREE.Mesh(geometry, material);
+                    mesh.position.x = Math.random() * 10000 - 5000;
+                    mesh.position.y = Math.random() * 10000 - 5000;
+                    mesh.position.z = Math.random() * 10000 - 5000;
 
-                sphere.position.x = Math.random() * 10000 - 5000;
-                sphere.position.y = Math.random() * 10000 - 5000;
-                sphere.position.z = Math.random() * 10000 - 5000;
+                    mesh.rotation.x = Math.random() * 10000 - 5000;
+                mesh.rotation.y = Math.random() * 10000 - 5000;
+                mesh.rotation.z = Math.random() * 10000 - 5000;
 
-                sphere.rotation.x = Math.random() * 10000 - 5000;
-                sphere.rotation.y = Math.random() * 10000 - 5000;
-                sphere.rotation.z = Math.random() * 10000 - 5000;
-                //Tamaño de la esfera
-                sphere.scale.x = sphere.scale.y = sphere.scale.z = Math.random() + 0.5;
+                    mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 3 + 1;
 
-                group.add(sphere);
-                objects.push(sphere);
+                    scene.add( mesh );
 
-            }
-            scene.add(group);
-            renderer = new THREE.WebGLRenderer();
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            //document.body.appendChild(renderer.domElement);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFShadowMap;
+                    spheres.push( mesh );
 
-            container.appendChild(renderer.domElement);
+                }
 
+                // Skybox
+
+                var shader = THREE.ShaderLib[ "cube" ];
+                shader.uniforms[ "tCube" ].value = textureCube;
+
+                var material = new THREE.ShaderMaterial( {
+
+                    fragmentShader: shader.fragmentShader,
+                    vertexShader: shader.vertexShader,
+                    uniforms: shader.uniforms,
+                    depthWrite: false,
+                    side: THREE.BackSide
+
+                } );
+
+                mesh = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), material );
+                sceneCube.add( mesh );
+
+                //
+
+                renderer = new THREE.WebGLRenderer();
+                renderer.setPixelRatio( window.devicePixelRatio );
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.autoClear = false;
+                container.appendChild( renderer.domElement );
+
+                //
+
+            window.addEventListener( 'resize', onWindowResize, false );
             raycaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
             //Arrarstrar la esfera
-            var dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
+            var dragControls = new THREE.DragControls(spheres, camera, renderer.domElement);
             dragControls.addEventListener('dragstart', function (event) { controls.enabled = false; });
             dragControls.addEventListener('dragend', function (event) { controls.enabled = true; });
+
 
             document.addEventListener('mousedown', onDocumentMouseDown, false);
             document.addEventListener('keydown', onDocumentKeyDown, false);
             document.addEventListener('keyup', onDocumentKeyUp, false);
-        }
 
-        function onDocumentMouseDown(event) {
+            }
+
+            function onWindowResize() {
+
+                windowHalfX = window.innerWidth / 2,
+                windowHalfY = window.innerHeight / 2,
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                cameraCube.aspect = window.innerWidth / window.innerHeight;
+                cameraCube.updateProjectionMatrix();
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+            }
+
+            function onDocumentMouseMove(event) {
+
+                mouseX = ( event.clientX - windowHalfX ) * 10;
+                mouseY = ( event.clientY - windowHalfY ) * 10;
+
+            }
+
+            function onDocumentMouseDown(event) {
             event.preventDefault();
             mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
             mouse.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-            console.log("x " + mouse.x + "y " + mouse.y);
             raycaster.setFromCamera(mouse, camera);
-            var intersects = raycaster.intersectObjects(objects);
+            var intersects = raycaster.intersectObjects(spheres);
             if (intersects.length > 0) {
                 var intersect = intersects[0];
-                if (intersect.object != group) {
-                    group.remove(intersect.object);
+                if (intersect.object != scene) {
+                    scene.remove(intersect.object);
                     playSound();
                 }
             }
         }
-        function onDocumentKeyDown(event) {
+
+             function onDocumentKeyDown(event) {
             switch (event.keyCode) {
                 case 16: isShiftDown = true; break;
+                }
             }
-        }
-        function onDocumentKeyUp(event) {
+            function onDocumentKeyUp(event) {
             switch (event.keyCode) {
                 case 16: isShiftDown = false; break;
+                }
             }
+
+            function animate() {
+
+                requestAnimationFrame( animate );
+                for (var i = 0; i < spheres.length; i++) {
+                if(spheres[i] !== undefined)
+                    spheres[i].rotation.y += Math.PI / 100;
         }
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            render();
-            renderer.render(scene, camera);
-        };
-        //Rotacion de cada una de las esferas sobre su propio eje, (Con el eje Y)
-              for (var i = 0; i < objects.length; i++) {
-                if(objects[i] !== undefined)
-                    objects[i].rotation.y += Math.PI / 100;
-        }
-        function render() {
-            var timer = 0.0001 * Date.now();
-            for (var i = 0, l = group.children.length; i < l; i++) {
-                var sphere = group.children[i];
-                sphere.position.x = 2500 * Math.cos(timer + i);
-                sphere.position.y = 2500 * Math.sin(timer + i * 1.1);
+                controls.update();
+                render();
+                renderer.render(scene, camera);
             }
-            renderer.render(scene, camera);
-        }
-        function playSound() {
+
+            //Rotacion de cada una de las esferas sobre su propio eje, (Con el eje Y)
+              
+            function render() {
+
+                var timer = 0.0001 * Date.now();
+
+                for ( var i = 0, il = spheres.length; i < il; i ++ ) {
+
+                    var sphere = spheres[ i ];
+
+                    sphere.position.x = 5000 * Math.cos( timer + i );
+                    sphere.position.y = 5000 * Math.sin( timer + i * 1.1 );
+
+                }
+
+                camera.lookAt( scene.position );
+                cameraCube.rotation.copy( camera.rotation );
+
+                renderer.render( sceneCube, cameraCube );
+                renderer.render( scene, camera );
+
+            }
+
+            function playSound() {
             var sound = document.getElementById("audio");
             sound.currentTime = 1;
-            sound.play()
+            sound.play();
         }
-        function playCumbion() {
-            var sound = document.getElementById("cumbion");
-            sound.currentTime = 1;
-            sound.play()
-        }
+
         window.addEventListener('click', clickmose, false);
     </script>
 
