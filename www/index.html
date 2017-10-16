@@ -76,15 +76,20 @@
 
             //Forma del objeto
             var geometry = new THREE.SphereGeometry(300, 32, 32);
+
+            //Propiedades de la esfera
+            var shader = THREE.FresnelShader;
+            var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+            uniforms[ "tCube" ].value = textureCube;
+
+            var material = new THREE.ShaderMaterial( {
+                uniforms: uniforms,
+                vertexShader: shader.vertexShader,
+                fragmentShader: shader.fragmentShader
+            } );
+
+
             for (var i = 0; i < 200; i++) {
-                var material = new THREE.MeshBasicMaterial( //Propiedades de la esfera
-                    {
-                       padding: "",
-                        opacity: .5,
-                        transparent: true,
-                      
-                       wireframe: false //Renderizado de poligonos.
-                    });
                 var sphere = new THREE.Mesh(geometry, material);
 
                 sphere.position.x = Math.random() * 10000 - 5000;
