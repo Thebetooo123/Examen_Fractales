@@ -28,6 +28,7 @@
     </style>
 </head>
 <audio id="audio" src="sound/burbuja3.wav" autostart="false"></audio>
+<audio id="cumbion" src="sound/cumbion.mp3" autostart="false"></audio>
 
 <body>
     <script src="js/three.js"></script>
@@ -45,7 +46,9 @@
         var mouse, raycaster, isShiftDown = false;
 
         init();
+        
         animate();
+        playCumbion();
         function init() {
             container = document.createElement('div');
             document.body.appendChild(container);
@@ -177,6 +180,11 @@
         }
         function playSound() {
             var sound = document.getElementById("audio");
+            sound.currentTime = 1;
+            sound.play()
+        }
+        function playCumbion() {
+            var sound = document.getElementById("cumbion");
             sound.currentTime = 1;
             sound.play()
         }
