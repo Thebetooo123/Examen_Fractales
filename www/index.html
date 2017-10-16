@@ -140,11 +140,9 @@
             var intersects = raycaster.intersectObjects(objects);
             if (intersects.length > 0) {
                 var intersect = intersects[0];
-                if (isShiftDown) {
-                    if (intersect.object != group) {
-                        group.remove(intersect.object);
-                        playSound();
-                    }
+                if (intersect.object != group) {
+                    group.remove(intersect.object);
+                    playSound();
                 }
             }
         }
