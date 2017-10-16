@@ -76,7 +76,7 @@
                 scene = new THREE.Scene();
                 sceneCube = new THREE.Scene();
 
-                var geometry = new THREE.SphereGeometry( 100, 32, 16 );
+                var geometry = new THREE.SphereGeometry( 300, 32, 32 );
 
                 var path = "textures/cube/";
                 var format = '.jpg';
@@ -99,7 +99,7 @@
                 wireframe: !true
             } );
                 
-                for ( var i = 0; i < 500; i ++ ) {
+                for ( var i = 0; i < 150; i ++ ) {
 
                     var mesh = new THREE.Mesh( geometry, material );
 
