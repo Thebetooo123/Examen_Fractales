@@ -55,10 +55,17 @@
             //Controles mouse
             controls = new THREE.TrackballControls(camera);
             //Esena
+            var path = "textures/cube/";
+            var format = '.jpg';
+            var urls = [
+                        path + 'px' + format, path + 'nx' + format,
+                        path + 'py' + format, path + 'ny' + format,
+                        path + 'pz' + format, path + 'nz' + format
+                    ];
+            var textureCube = new THREE.CubeTextureLoader().load( urls );
+			textureCube.format = THREE.RGBFormat;
             scene = new THREE.Scene();
-            scene.background = new THREE.CubeTextureLoader()
-					.setPath( 'textures/cube/' )
-					.load( [ 'px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg' ] );
+            scene.background = textureCube;
             //scene2 = new THREE.Scene();
 
             //Grid
