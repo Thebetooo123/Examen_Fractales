@@ -72,10 +72,11 @@
             for (var i = 0; i < 100; i++) {
                 var material = new THREE.MeshBasicMaterial( //Propiedades de la esfera
                     {
-                        padding: "",
-                        opacity: 5,
+                       padding: "",
+                        opacity: .5,
                         transparent: true,
-                        wireframe: false //Renderizado de poligonos.
+                      
+                       wireframe: false //Renderizado de poligonos.
                     });
                 var sphere = new THREE.Mesh(geometry, material);
 
