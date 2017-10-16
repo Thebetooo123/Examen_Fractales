@@ -46,7 +46,6 @@
 
         init();
         animate();
-
         function init() {
             container = document.createElement('div');
             document.body.appendChild(container);
@@ -57,7 +56,9 @@
             controls = new THREE.TrackballControls(camera);
             //Esena
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xf0f0f0);
+            scene.background = new THREE.CubeTextureLoader()
+					.setPath( 'textures/cube/' )
+					.load( [ 'px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg' ] );
             //scene2 = new THREE.Scene();
 
             //Grid
@@ -71,8 +72,8 @@
             for (var i = 0; i < 100; i++) {
                 var material = new THREE.MeshBasicMaterial( //Propiedades de la esfera
                     {
-                        color: Math.random() * 0xffff00,
-                        opacity: .3,
+                        padding: "",
+                        opacity: 5,
                         transparent: true,
                         wireframe: false //Renderizado de poligonos.
                     });
@@ -167,7 +168,7 @@
             sound.play()
         }
         function clickmose(event) {
-            //  playSound();
+            playSound();
         }
         window.addEventListener('click', clickmose, false);
     </script>
