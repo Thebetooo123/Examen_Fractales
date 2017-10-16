@@ -76,7 +76,7 @@
 
             //Forma del objeto
             var geometry = new THREE.SphereGeometry(300, 32, 32);
-            for (var i = 0; i < 100; i++) {
+            for (var i = 0; i < 200; i++) {
                 var material = new THREE.MeshBasicMaterial( //Propiedades de la esfera
                     {
                        padding: "",
@@ -87,13 +87,13 @@
                     });
                 var sphere = new THREE.Mesh(geometry, material);
 
-                sphere.position.x = Math.random() * 6000 - 3000;
-                sphere.position.y = Math.random() * 6000 - 3000;
-                sphere.position.z = Math.random() * 6000 - 3000;
+                sphere.position.x = Math.random() * 10000 - 5000;
+                sphere.position.y = Math.random() * 10000 - 5000;
+                sphere.position.z = Math.random() * 10000 - 5000;
 
-                sphere.rotation.x = Math.random() * 6000 - 3000;
-                sphere.rotation.y = Math.random() * 6000 - 3000;
-                sphere.rotation.z = Math.random() * 6000 - 3000;
+                sphere.rotation.x = Math.random() * 10000 - 5000;
+                sphere.rotation.y = Math.random() * 10000 - 5000;
+                sphere.rotation.z = Math.random() * 10000 - 5000;
                 //Tamaño de la esfera
                 sphere.scale.x = sphere.scale.y = sphere.scale.z = Math.random() + 0.5;
 
